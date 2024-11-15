@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f24/proj-happycows-f24-12
 owner: ucsb-cs156-f24
 repo_name: proj-happycows-f24-12
-pull_requests: []
+pull_requests: [{"author":{"id":"MDQ6VXNlcjMwOTE2MDI3","is_bot":false,"login":"jzipkin1812","name":"Javin Zipkin"},"headRefName":"javin-sortingBug","number":20,"title":"Sort by leaderbord wealth bug fix","url":"https://github.com/ucsb-cs156-f24/proj-happycows-f24-12/pull/20"}]
