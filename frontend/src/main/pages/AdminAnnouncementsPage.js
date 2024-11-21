@@ -27,15 +27,16 @@ export default function AdminAnnouncementsPage() {
 
     const commonsName = commonsPlus?.commons.name;
 
-    const { data: announcements } = useBackend(
+    const { data: announcements, error: _error, status: _status } = useBackend(
       [`/api/announcements/getbycommonsid?commonsId=${commonsId}`],
       {
           method: "GET",
           url: "/api/announcements/getbycommonsid",
           params: {
-              commonsID: commonsId,
+              commonsId: commonsId,
           },
-      }
+      },
+      []
   );
 
     return (
@@ -45,17 +46,10 @@ export default function AdminAnnouncementsPage() {
           <Row  className="pt-5">
             <Col>
               <h2>Announcements for Commons: {commonsName}</h2>
+              <AnnouncementTable announcements={announcements} currentUser={currentUser} />
               <Button variant = "primary" href = {`/admin/announcements/${commonsId}/create`} >
                 Create Announcement
               </Button>
-            </Col>
-          </Row>
-
-
-          <Row  className="pt-5">
-            <Col>
-              <h2>Announcements</h2>
-              <AnnouncementTable announcements={announcements} currentUser={currentUser} />
             </Col>
           </Row>
         </div>
