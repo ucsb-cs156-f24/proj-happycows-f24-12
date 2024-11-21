@@ -27,7 +27,7 @@ export default function AdminAnnouncementsPage() {
 
     const commonsName = commonsPlus?.commons.name;
 
-    const { data: announcements, error: _error, status: _status } = useBackend(
+    const { data: response, error: _error, status: _status } = useBackend(
       [`/api/announcements/getbycommonsid?commonsId=${commonsId}`],
       {
           method: "GET",
@@ -37,7 +37,9 @@ export default function AdminAnnouncementsPage() {
           },
       },
       []
-  );
+    );
+    const announcements = response?.content || [];
+
 
     return (
       <BasicLayout>
