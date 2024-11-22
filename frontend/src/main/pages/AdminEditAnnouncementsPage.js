@@ -11,10 +11,10 @@ export default function AdminEditAnnouncementsPage() {
   const { data: announcement, _error, _status } =
     useBackend(
       // Stryker disable next-line all : don't test internal caching of React Query
-      [`/api/announcements?id=${id}`],
+      [`/api/announcements/getbyid?id=${id}`],
       {  // Stryker disable next-line all : GET is the default, so changing this to "" doesn't introduce a bug
         method: "GET",
-        url: `/api/announcements`,
+        url: `/api/announcements/getbyid`,
         params: {
           id
         }
@@ -23,15 +23,19 @@ export default function AdminEditAnnouncementsPage() {
 
 
   const objectToAxiosPutParams = (announcement) => ({
-    url: "/api/announcements/update",
+    url: "/api/announcements/put",
     method: "PUT",
     params: {
       id: announcement.id,
+      commonsId: announcement.commonsId,
+      startDate: announcement.startDate,
+      endDate: announcement.endDate,
+      announcementText: announcement.announcementText,
     },
     data: {
-        "announcementText": announcement.announcementText,
         "startDate": announcement.startDate,
         "endDate": announcement.endDate,
+        "announcementText": announcement.announcementText,
     }
   });
 
@@ -43,7 +47,7 @@ export default function AdminEditAnnouncementsPage() {
     objectToAxiosPutParams,
     { onSuccess },
     // Stryker disable next-line all : hard to set up test for caching
-    [`/api/announcement?id=${id}`]
+    [`/api/announcements/getbyid?id=${id}`]
   );
 
   const { isSuccess } = mutation
@@ -53,15 +57,15 @@ export default function AdminEditAnnouncementsPage() {
   }
 
   if (isSuccess) {
-    return <Navigate to="/admin/announcements" />
+    return <Navigate to="/admin/announcements/1" />
   }
 
   return (
     <BasicLayout>
       <div className="pt-2">
-        <h1>Edit Announcements</h1>
+        <h1>Edit Announcement</h1>
         {announcement &&
-          <AnnouncementForm initialAnnouncement={announcement} submitAction={submitAction} buttonLabel="Update" />
+          <AnnouncementForm initialContents={announcement} submitAction={submitAction} buttonLabel="Update" />
         }
       </div>
     </BasicLayout>
