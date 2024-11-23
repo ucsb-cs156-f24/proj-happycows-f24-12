@@ -182,7 +182,7 @@ import javax.validation.Valid;
 
         // The provided announcement text must not be empty or missing.
 <span class="fc bfc" id="L184" title="All 4 branches covered.">        if (params.getAnnouncementText() == null || params.getAnnouncementText().equals(&quot;&quot;)) {</span>
-<span class="fc" id="L185">            throw new IllegalArgumentException(&quot;Announcement Text cannot be empty&quot;);</span>
+<span class="fc" id="L185">            throw new IllegalArgumentException(&quot;Announcement Text cannot be empty.&quot;);</span>
         }
         else {
 <span class="fc" id="L188">            updated.setAnnouncementText(params.getAnnouncementText());</span>
@@ -205,7 +205,7 @@ import javax.validation.Valid;
             }
         }
 <span class="fc" id="L207">        announcementRepository.save(updated);</span>
-<span class="fc" id="L208">        return ResponseEntity.status(status).build();</span>
+<span class="fc" id="L208">        return ResponseEntity.ok(updated);</span>
     }
 
 
