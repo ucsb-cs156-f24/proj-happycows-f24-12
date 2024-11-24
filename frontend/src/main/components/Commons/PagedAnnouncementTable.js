@@ -49,7 +49,7 @@ const PagedAnnouncementTable = () => {
                     return (startDate <= now) && (now <= endDate);
                 }
             })
-            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate)); // 保持按时间降序排序
+            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
     }, [page.content]);
 
     return (
