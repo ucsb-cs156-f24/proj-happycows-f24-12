@@ -1,14 +1,41 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
+
 
 import AdminCreateAnnouncementsPage from "main/pages/AdminCreateAnnouncementsPage";
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
+import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 
 const mockedNavigate = jest.fn();
+jest.mock("react-router-dom", () => {
+    const originalModule = jest.requireActual("react-router-dom");
+    return {
+        __esModule: true,
+        ...originalModule,
+        Navigate: (x) => {
+            mockedNavigate(x);
+            return null;
+        },
+    };
+});
+
+const mockToast = jest.fn();
+jest.mock("react-toastify", () => {
+    const originalModule = jest.requireActual("react-toastify");
+    return {
+        __esModule: true,
+        ...originalModule,
+        toast: (x) => mockToast(x),
+    };
+});
 jest.mock("react-router-dom", () => {
     const originalModule = jest.requireActual("react-router-dom");
     return {
@@ -39,21 +66,28 @@ describe("AdminCreateAnnouncementsPage tests", () => {
         axiosMock.reset();
         axiosMock.resetHistory();
         axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
+        axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
         axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
+        axiosMock.onGet("/api/commons/plus").reply(200, {
+            commons: { name: "Test Commons" },
+        });
         axiosMock.onGet("/api/commons/plus").reply(200, {
             commons: { name: "Test Commons" },
         });
     });
 
     test("renders without crashing", async () => {
+    test("renders without crashing", async () => {
         render(
             <QueryClientProvider client={queryClient}>
+                <MemoryRouter initialEntries={["/admin/announcements/create/1"]}>
                 <MemoryRouter initialEntries={["/admin/announcements/create/1"]}>
                     <AdminCreateAnnouncementsPage />
                 </MemoryRouter>
             </QueryClientProvider>
         );
 
+        expect(await screen.findByText("Create Announcement for Test Commons")).toBeInTheDocument();
         expect(await screen.findByText("Create Announcement for Test Commons")).toBeInTheDocument();
     });
 
