@@ -11,6 +11,35 @@ describe("OurTable tests (optimized)", () => {
         }));
     };
 
+    const threeRows = [
+        {
+            col1: "Hello",
+            col2: "World",
+            createdAt: "2021-04-01T04:00:00.000",
+            log: "foo\nbar\n  baz",
+        },
+        {
+            col1: "react-table",
+            col2: "rocks",
+            createdAt: "2022-01-04T14:00:00.000",
+            log: "foo\nbar",
+        },
+        {
+            col1: "whatever",
+            col2: "you want",
+            createdAt: "2023-04-01T23:00:00.000",
+            log: "bar\n  baz",
+        },
+    ];
+    
+    const hundredRows = Array.from({ length: 100 }, (_, i) => ({
+        col1: `Hello ${i}`,
+        col2: `World ${i}`,
+        createdAt: "2021-04-01T04:00:00.000",
+        log: `foo\nbar\n  baz ${i}`,
+    }));
+    
+
     const columns = [
         { Header: "Column 1", accessor: "col1" },
         { Header: "Column 2", accessor: "col2" },
@@ -83,5 +112,27 @@ describe("OurTable tests (optimized)", () => {
             fireEvent.click(screen.getByTestId(buttonId));
             expect(await screen.findByTestId("testid-current-page-button")).toHaveTextContent(expectedPage);
         });
+
+        test("renders ellipsis in pagination correctly", () => {
+            renderTable(generateRows(100)); // 100 rows ensure at least 10 pages with a pageSize of 10
+        
+            // Navigate to page 5 (zero-based index 4)
+            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 2
+            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 3
+            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 4
+            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 5
+        
+            // Verify left ellipsis appears
+            expect(screen.getByTestId("testid-left-ellipsis")).toBeInTheDocument();
+        
+            // Navigate further to page 6
+            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 6
+        
+            // Verify right ellipsis appears
+            expect(screen.getByTestId("testid-right-ellipsis")).toBeInTheDocument();
+        });
+        
+        
+        
         
 });
