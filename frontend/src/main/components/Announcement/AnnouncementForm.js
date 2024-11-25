@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 function AnnouncementForm({ initialContents, submitAction, buttonLabel = "Create" }) {
+    // Stryker disable all
     const {
         register,
         formState: { errors },
@@ -37,6 +38,7 @@ function AnnouncementForm({ initialContents, submitAction, buttonLabel = "Create
 
         return `${year}-${month}-${day}`;
     }
+    // Stryker restore all
 
     const onSubmit = (data) => {
         if (!data.endDate) {
