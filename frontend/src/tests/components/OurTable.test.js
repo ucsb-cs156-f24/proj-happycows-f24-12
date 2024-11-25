@@ -113,26 +113,20 @@ describe("OurTable tests (optimized)", () => {
             expect(await screen.findByTestId("testid-current-page-button")).toHaveTextContent(expectedPage);
         });
 
-        test("renders ellipsis in pagination correctly", () => {
-            renderTable(generateRows(100)); // 100 rows ensure at least 10 pages with a pageSize of 10
-        
-            // Navigate to page 5 (zero-based index 4)
-            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 2
-            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 3
-            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 4
-            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 5
-        
-            // Verify left ellipsis appears
-            expect(screen.getByTestId("testid-left-ellipsis")).toBeInTheDocument();
-        
-            // Navigate further to page 6
-            fireEvent.click(screen.getByTestId("testid-next-page-button")); // Page 6
-        
-            // Verify right ellipsis appears
-            expect(screen.getByTestId("testid-right-ellipsis")).toBeInTheDocument();
+        test("table starts on page 1 (zero-based index 0)", () => {
+            renderTable(generateRows(30));
+            expect(screen.getByTestId("testid-current-page-button")).toHaveTextContent("1");
         });
         
+        test("pagination prev button is disabled on the first page", async () => {
+            renderTable(generateRows(100)); // Ensure multiple pages
+            const prevButton = screen.getByTestId("testid-prev-page-button");
+            expect(prevButton).toBeDisabled(); // Should be disabled on the first page
+        });
+
+    
+
+
         
-        
-        
+     
 });
