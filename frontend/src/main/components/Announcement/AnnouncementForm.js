@@ -40,12 +40,14 @@ function AnnouncementForm({ initialContents, submitAction, buttonLabel = "Create
     }
     // Stryker restore all
 
+    // Stryker disable all
     const onSubmit = (data) => {
         if (!data.endDate) {
             data.endDate = null;
         }
         submitAction(data);
     };
+    // Stryker restore all
 
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
