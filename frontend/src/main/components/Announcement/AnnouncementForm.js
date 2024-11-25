@@ -1,41 +1,57 @@
 import { Button, Form } from 'react-bootstrap';
-import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 function AnnouncementForm({ initialContents, submitAction, buttonLabel = "Create" }) {
-
-    // Stryker disable all
     const {
         register,
         formState: { errors },
         handleSubmit,
-    } = useForm(
-        { defaultValues: initialContents || {}, }
-    );
-    // Stryker restore all
+    } = useForm({
+        defaultValues: {
+            startDate: initialContents?.startDate 
+                ? initialContents.startDate.split("T")[0]
+                : getPSTDate(),
+            endDate: initialContents?.endDate || null,
+            announcementText: initialContents?.announcementText || "",
+            ...initialContents, 
+        },
+    });
 
     const navigate = useNavigate();
 
     const testIdPrefix = "AnnouncementForm";
 
-    // For explanation, see: https://stackoverflow.com/questions/3143070/javascript-regex-iso-datetime
-    // Note that even this complex regex may still need some tweaks
+    function getPSTDate() {
+        const now = new Date();
+        const options = {
+            timeZone: 'America/Los_Angeles',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        };
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const [month, day, year] = formatter.formatToParts(now)
+            .filter(({ type }) => type === 'month' || type === 'day' || type === 'year')
+            .map(({ value }) => value);
 
-    // Stryker disable next-line Regex
-    const isodate_regex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/i;
+        return `${year}-${month}-${day}`;
+    }
 
-    // Stryker disable next-line all
-    //const yyyyq_regex = /((19)|(20))\d{2}[1-4]/i; // Accepts from 1900-2099 followed by 1-4.  Close enough.
+    const onSubmit = (data) => {
+        if (!data.endDate) {
+            data.endDate = null;
+        }
+        submitAction(data);
+    };
 
     return (
-
-        <Form onSubmit={handleSubmit(submitAction)}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
 
             {initialContents && (
-                <Form.Group className="mb-3" >
+                <Form.Group className="mb-3">
                     <Form.Label htmlFor="id">Id</Form.Label>
                     <Form.Control
-                    // Stryker disable next-line all
                         data-testid={testIdPrefix + "-id"}
                         id="id"
                         type="text"
@@ -46,45 +62,37 @@ function AnnouncementForm({ initialContents, submitAction, buttonLabel = "Create
                 </Form.Group>
             )}
 
-            <Form.Group className="mb-3" >
+            <Form.Group className="mb-3">
                 <Form.Label htmlFor="startDate">Start Date</Form.Label>
                 <Form.Control
-                // Stryker disable next-line all
                     data-testid={testIdPrefix + "-startDate"}
                     id="startDate"
-                    type="datetime-local"
+                    type="date" 
                     isInvalid={Boolean(errors.startDate)}
                     {...register("startDate", {
-                        required: "StartDate is required.",
-                        pattern: isodate_regex
+                        required: "Start Date is required.", 
                     })}
                 />
                 <Form.Control.Feedback type="invalid">
-                    {errors.startDate && 'Start Date is required and must be provided in ISO format.'}
+                    {errors.startDate && 'Start Date is required.'}
                 </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group className="mb-3" >
+            <Form.Group className="mb-3">
                 <Form.Label htmlFor="endDate">End Date</Form.Label>
                 <Form.Control
-                // Stryker disable next-line all
                     data-testid={testIdPrefix + "-endDate"}
                     id="endDate"
-                    type="datetime-local"
+                    type="date" 
                     isInvalid={Boolean(errors.endDate)}
-                    // Stryker disable next-line all
-                    {...register("endDate", {
-                        pattern: isodate_regex
-                    })}
+                    {...register("endDate")}
                 />
             </Form.Group>
-
 
             <Form.Group className="mb-3">
                 <Form.Label htmlFor="announcementText">Announcement</Form.Label>
                 <Form.Control
                     as="textarea"
-                    // Stryker disable next-line all
                     data-testid={testIdPrefix + "-announcementText"}
                     id="announcementText"
                     rows={5}
@@ -100,7 +108,6 @@ function AnnouncementForm({ initialContents, submitAction, buttonLabel = "Create
 
             <Button
                 type="submit"
-                // Stryker disable next-line all
                 data-testid={testIdPrefix + "-submit"}
             >
                 {buttonLabel}
@@ -108,14 +115,13 @@ function AnnouncementForm({ initialContents, submitAction, buttonLabel = "Create
             <Button
                 variant="Secondary"
                 onClick={() => navigate(-1)}
-                // Stryker disable next-line all
                 data-testid={testIdPrefix + "-cancel"}
             >
                 Cancel
             </Button>
 
         </Form>
-    )
+    );
 }
 
 export default AnnouncementForm;

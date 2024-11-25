@@ -86,17 +86,102 @@ describe("AnnouncementForm tests", () => {
         expect(await screen.findByText(/Create/)).toBeInTheDocument();
         const submitButton = screen.getByText(/Create/);
         fireEvent.click(submitButton);
-
-        await screen.findByText(/Start Date is required and must be provided in ISO format./);
-        expect(screen.getByText(/Announcement is required./)).toBeInTheDocument();
-
-        // const endInput = screen.getByTestId(`${testId}-end`);
-        // fireEvent.change(endInput, { target: { value: "a" } });
-        // fireEvent.click(submitButton);
-
-        // await waitFor(() => {
-        //     expect(screen.getByText(/End must be provided in ISO format./)).toBeInTheDocument();
-        // });
     });
+
+    test("onSubmit sets endDate to null if it's blank", async () => {
+        const submitActionMock = jest.fn();
+    
+        const initialContents = {
+            startDate: "2023-11-21",
+            announcementText: "Test announcement",
+        };
+    
+        render(
+            <QueryClientProvider client={queryClient}>
+                <AnnouncementForm initialContents={initialContents} submitAction={submitActionMock} />
+            </QueryClientProvider>
+        );
+    
+        const startDateField = screen.getByTestId("AnnouncementForm-startDate");
+        const endDateField = screen.getByTestId("AnnouncementForm-endDate");
+        const messageField = screen.getByTestId("AnnouncementForm-announcementText");
+        const submitButton = screen.getByTestId("AnnouncementForm-submit");
+    
+        fireEvent.change(startDateField, { target: { value: "2023-11-21" } });
+        fireEvent.change(endDateField, { target: { value: "" } });
+        fireEvent.change(messageField, { target: { value: "Test announcement" } });
+    
+        fireEvent.click(submitButton);
+    
+        await waitFor(() => {
+            expect(submitActionMock).toHaveBeenCalledWith({
+                startDate: "2023-11-21",
+                endDate: null,  
+                announcementText: "Test announcement",
+            });
+        });
+    });
+    
+    test("onSubmit sends valid data when endDate is provided", async () => {
+        const submitActionMock = jest.fn();
+    
+        const initialContents = {
+            startDate: "2023-11-21",
+            announcementText: "Test announcement",
+        };
+    
+        render(
+            <QueryClientProvider client={queryClient}>
+                <AnnouncementForm initialContents={initialContents} submitAction={submitActionMock} />
+            </QueryClientProvider>
+        );
+    
+        const startDateField = screen.getByTestId("AnnouncementForm-startDate");
+        const endDateField = screen.getByTestId("AnnouncementForm-endDate");
+        const messageField = screen.getByTestId("AnnouncementForm-announcementText");
+        const submitButton = screen.getByTestId("AnnouncementForm-submit");
+    
+        fireEvent.change(startDateField, { target: { value: "2023-11-21" } });
+        fireEvent.change(endDateField, { target: { value: "2024-11-21" } });
+        fireEvent.change(messageField, { target: { value: "Test announcement" } });
+    
+        fireEvent.click(submitButton);
+    
+        await waitFor(() => {
+            expect(submitActionMock).toHaveBeenCalledWith({
+                startDate: "2023-11-21",
+                endDate: "2024-11-21", 
+                announcementText: "Test announcement",
+            });
+        });
+    });
+
+    test("displays error message for missing start date", async () => {
+        const submitActionMock = jest.fn();
+    
+        const initialContents = {
+            announcementText: "Test announcement",
+        };
+    
+        render(
+            <QueryClientProvider client={queryClient}>
+                <AnnouncementForm initialContents={initialContents} submitAction={submitActionMock} />
+            </QueryClientProvider>
+        );
+    
+        const startDateField = screen.getByTestId("AnnouncementForm-startDate");
+        const messageField = screen.getByTestId("AnnouncementForm-announcementText");
+        const submitButton = screen.getByTestId("AnnouncementForm-submit");
+    
+        fireEvent.change(startDateField, { target: { value: "" } });
+        fireEvent.change(messageField, { target: { value: "Test announcement" } });
+    
+        fireEvent.click(submitButton);
+    
+        await waitFor(() => {
+            expect(screen.getByText("Start Date is required.")).toBeInTheDocument();
+        });
+    });
+    
 
 });

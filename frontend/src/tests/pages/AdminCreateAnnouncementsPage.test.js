@@ -58,67 +58,61 @@ describe("AdminCreateAnnouncementsPage tests", () => {
     });
 
     test("When you fill in form and click submit, the right things happen", async () => {
-        
-    // Mocking the POST response
-    axiosMock.onPost("/api/announcements/post").reply(200, {
-        id: 42,
-        startDate: "2023-11-21T17:52:33.000",
-        endDate: "2024-11-21T17:52:33.000",
-        message: "Test announcement",
+            
+        // Mocking the POST response
+        axiosMock.onPost("/api/announcements/post").reply(200, {
+            id: 42,
+            startDate: "2023-11-21T17:52:33.000",
+            endDate: "2024-11-21T17:52:33.000",
+            message: "Test announcement",
+        });
+
+        render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter initialEntries={["/admin/announcements/create/1"]}>
+                    <AdminCreateAnnouncementsPage />
+                </MemoryRouter>
+            </QueryClientProvider>
+        );
+
+        expect(await screen.findByText("Create Announcement for Test Commons")).toBeInTheDocument();
+
+        // Locate form fields and submit button
+        const startDateField = screen.getByLabelText("Start Date");
+        const endDateField = screen.getByLabelText("End Date");
+        const messageField = screen.getByLabelText("Announcement");
+        const submitButton = screen.getByTestId("AnnouncementForm-submit");
+
+        fireEvent.change(startDateField, { target: { value: "2023-11-21" } });
+        fireEvent.change(endDateField, { target: { value: "2024-11-21" } });
+        fireEvent.change(messageField, { target: { value: "Test announcement" } });
+
+        fireEvent.click(submitButton);
+
+        await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+
+        const expectedAnnouncement = {
+            startDate: "2023-11-21",
+            endDate: "2024-11-21",
+            announcementText: "Test announcement",
+        };
+
+        expect(JSON.parse(axiosMock.history.post[0].data)).toEqual(expectedAnnouncement);
+
+        expect(mockToast).toBeCalledWith(
+            <div>
+                <p>Announcement successfully created!</p>
+                <ul>
+                    <li>ID: 42</li>
+                    <li>Start Date: 2023-11-21T17:52:33.000</li>
+                    <li>End Date: 2024-11-21T17:52:33.000</li>
+                    <li>Announcement: Test announcement</li>
+                </ul>
+            </div>
+        );
+
+        expect(mockedNavigate).toBeCalledWith({ to: "/" });
     });
-
-    render(
-        <QueryClientProvider client={queryClient}>
-            <MemoryRouter initialEntries={["/admin/announcements/create/1"]}>
-                <AdminCreateAnnouncementsPage />
-            </MemoryRouter>
-        </QueryClientProvider>
-    );
-
-    expect(await screen.findByText("Create Announcement for Test Commons")).toBeInTheDocument();
-
-    // Locate form fields and submit button
-    const startDateField = screen.getByLabelText("Start Date");
-    const endDateField = screen.getByLabelText("End Date");
-    const messageField = screen.getByLabelText("Announcement");
-    const submitButton = screen.getByTestId("AnnouncementForm-submit");
-
-    // Simulate filling out the form with proper ISO format for the dates
-    fireEvent.change(startDateField, { target: { value: "2023-11-21T17:52:33" } });
-    fireEvent.change(endDateField, { target: { value: "2024-11-21T17:52:33" } });
-    fireEvent.change(messageField, { target: { value: "Test announcement" } });
-
-    // Submit the form
-    fireEvent.click(submitButton);
-
-    // Wait for the API call to be triggered
-    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
-
-    // Verify sent to backend
-    const expectedAnnouncement = {
-        startDate: "2023-11-21T17:52:33.000",
-        endDate: "2024-11-21T17:52:33.000",
-        announcementText: "Test announcement",
-    };
-
-    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual(expectedAnnouncement);
-
-    // Verify the toast notification
-    expect(mockToast).toBeCalledWith(
-        <div>
-            <p>Announcement successfully created!</p>
-            <ul>
-                <li>ID: 42</li>
-                <li>Start Date: 2023-11-21T17:52:33.000</li>
-                <li>End Date: 2024-11-21T17:52:33.000</li>
-                <li>Announcement: Test announcement</li>
-            </ul>
-        </div>
-    );
-
-    // Verify navigation
-    expect(mockedNavigate).toBeCalledWith({ to: "/" });
-});
 
     
     
