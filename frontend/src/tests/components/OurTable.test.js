@@ -118,15 +118,95 @@ describe("OurTable tests (optimized)", () => {
             expect(screen.getByTestId("testid-current-page-button")).toHaveTextContent("1");
         });
         
-        test("pagination prev button is disabled on the first page", async () => {
-            renderTable(generateRows(100)); // Ensure multiple pages
-            const prevButton = screen.getByTestId("testid-prev-page-button");
-            expect(prevButton).toBeDisabled(); // Should be disabled on the first page
+        test("renders left ellipsis when on a later page", async () => {
+            renderTable(hundredRows); // Ensure enough rows for pagination
+        
+            // Navigate to a page where the left ellipsis should appear (page 6)
+            for (let i = 0; i < 5; i++) {
+                fireEvent.click(screen.getByTestId("testid-next-page-button"));
+            }
+        
+            // Check left ellipsis visibility
+            expect(screen.getByTestId("testid-left-ellipsis")).toBeInTheDocument();
         });
 
-    
-
-
+        test("renders right ellipsis when not on the last few pages", async () => {
+            renderTable(hundredRows); // Ensure enough rows for pagination
         
+            // Check right ellipsis visibility from the first page
+            expect(screen.getByTestId("testid-right-ellipsis")).toBeInTheDocument();
+        });
+        
+        test("renders a table with 100 rows and tests back three pages button", async () => {
+            render(<OurTable columns={columns} data={hundredRows} />);
+        
+            // Navigate to page 5 (zero-based index 4)
+            for (let i = 0; i < 4; i++) {
+                fireEvent.click(screen.getByTestId("testid-next-page-button"));
+            }
+        
+            // Verify button visibility
+            expect(screen.getByTestId("testid-back-three-page-button")).toBeInTheDocument();
+        
+            // Click the back three pages button
+            fireEvent.click(screen.getByTestId("testid-back-three-page-button"));
+        
+            // Verify that the current page is 2
+            expect(await screen.findByTestId("testid-current-page-button")).toContainHTML("2");
+        });
+
+        test("renders a table with 100 rows and tests back two pages button", async () => {
+            render(<OurTable columns={columns} data={hundredRows} />);
+        
+            // Navigate to page 4 (0-based index 3)
+            for (let i = 0; i < 3; i++) {
+                fireEvent.click(screen.getByTestId("testid-next-page-button"));
+            }
+        
+            // Confirm that the button is visible
+            expect(screen.getByTestId("testid-back-two-page-button")).toBeInTheDocument();
+        
+            // Click the back two pages button
+            fireEvent.click(screen.getByTestId("testid-back-two-page-button"));
+        
+            // Verify the page navigated back to 2 (0-based index 1)
+            expect(await screen.findByTestId("testid-current-page-button")).toContainHTML("2");
+        });
+        
+        
+
+            test("previous page button decrements the page index", () => {
+                const data = generateRows(60);
+                renderTable(data);
+            
+                // Navigate to page 2
+                fireEvent.click(screen.getByTestId("testid-next-page-button"));
+                expect(screen.getByTestId("testid-current-page-button")).toHaveTextContent("2");
+            
+                // Click the "Previous" button
+                fireEvent.click(screen.getByTestId("testid-prev-page-button"));
+                expect(screen.getByTestId("testid-current-page-button")).toHaveTextContent("1");
+            
+        });
+
+        test("renders a table with 100 rows and tests forward three pages button", async () => {
+            render(<OurTable columns={columns} data={hundredRows} />);
+        
+            // Navigate to page 6 (0-based index 5)
+            for (let i = 0; i < 5; i++) {
+                fireEvent.click(screen.getByTestId("testid-next-page-button"));
+            }
+        
+            // Confirm that the forward-three-pages button is visible
+            expect(screen.getByTestId("testid-forward-three-page-button")).toBeInTheDocument();
+        
+            // Click the forward-three-pages button
+            fireEvent.click(screen.getByTestId("testid-forward-three-page-button"));
+        
+            // Verify the page navigated to page 9 (0-based index 8)
+            expect(await screen.findByTestId("testid-current-page-button")).toContainHTML("9");
+        });
+        
+     
      
 });
