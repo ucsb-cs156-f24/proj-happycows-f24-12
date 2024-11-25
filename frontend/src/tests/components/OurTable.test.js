@@ -206,6 +206,35 @@ describe("OurTable tests (optimized)", () => {
             // Verify the page navigated to page 9 (0-based index 8)
             expect(await screen.findByTestId("testid-current-page-button")).toContainHTML("9");
         });
+
+        test("correct rows are displayed for each page", () => {
+            const data = generateRows(30); // 30 rows of data
+            const pageSize = 10; // Each page should show 10 rows
+            renderTable(data);
+        
+            // Page 1 (index 0)
+            let rows = screen.getAllByRole("row");
+            expect(rows).toHaveLength(pageSize + 1); // 10 rows + 1 header row
+            expect(rows[1]).toHaveTextContent("Hello 0");
+            expect(rows[10]).toHaveTextContent("Hello 9");
+        
+            // Navigate to page 2 (index 1)
+            fireEvent.click(screen.getByTestId("testid-next-page-button"));
+            rows = screen.getAllByRole("row");
+            expect(rows).toHaveLength(pageSize + 1); // 10 rows + 1 header row
+            expect(rows[1]).toHaveTextContent("Hello 10");
+            expect(rows[10]).toHaveTextContent("Hello 19");
+        
+            // Navigate to page 3 (index 2)
+            fireEvent.click(screen.getByTestId("testid-next-page-button"));
+            rows = screen.getAllByRole("row");
+            expect(rows).toHaveLength(pageSize + 1); // 10 rows + 1 header row
+            expect(rows[1]).toHaveTextContent("Hello 20");
+            expect(rows[10]).toHaveTextContent("Hello 29");
+        });
+        
+
+        
         
      
      
