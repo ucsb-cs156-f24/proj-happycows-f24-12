@@ -38,7 +38,7 @@ describe("OurTable tests (optimized)", () => {
     test("renders a table with data and pagination behavior", () => {
         const data = generateRows(15);
         renderTable(data);
-        expect(screen.queryByTestId("testid-next-page-button")).toBeInTheDocument();
+        expect(screen.getByTestId("testid-next-page-button")).toBeInTheDocument();
 
         fireEvent.click(screen.getByTestId("testid-next-page-button"));
         expect(screen.getByTestId("testid-current-page-button")).toHaveTextContent("2");
