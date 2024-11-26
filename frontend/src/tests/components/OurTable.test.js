@@ -10,27 +10,6 @@ describe("OurTable tests (optimized)", () => {
             log: `foo\nbar\n  baz ${i}`,
         }));
     };
-
-    const threeRows = [
-        {
-            col1: "Hello",
-            col2: "World",
-            createdAt: "2021-04-01T04:00:00.000",
-            log: "foo\nbar\n  baz",
-        },
-        {
-            col1: "react-table",
-            col2: "rocks",
-            createdAt: "2022-01-04T14:00:00.000",
-            log: "foo\nbar",
-        },
-        {
-            col1: "whatever",
-            col2: "you want",
-            createdAt: "2023-04-01T23:00:00.000",
-            log: "bar\n  baz",
-        },
-    ];
     
     const hundredRows = Array.from({ length: 100 }, (_, i) => ({
         col1: `Hello ${i}`,
