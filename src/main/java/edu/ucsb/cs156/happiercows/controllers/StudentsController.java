@@ -72,8 +72,8 @@ public class StudentsController extends ApiController {
         @Operation(summary = "Get individual Students from studentId")
         @PreAuthorize("hasRole('ROLE_ADMIN')")
         @GetMapping("")
-        public Student getStaff(
-                        @Parameter(name = "studentId") @RequestParam Long studentId)
+        public Student getStudentId(
+                        @Parameter(name = "studentId") @RequestParam String studentId)
                         throws JsonProcessingException {
 
                 Student students = studentRepository.findByStudentId(studentId).orElseThrow(() -> new EntityNotFoundException(Student.class, studentId));;

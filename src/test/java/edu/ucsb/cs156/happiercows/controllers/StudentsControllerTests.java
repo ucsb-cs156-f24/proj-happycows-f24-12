@@ -146,7 +146,7 @@ public class StudentsControllerTests extends ControllerTestCase {
         public void admin_can_get_one_students_from_a_studentId() throws Exception {
 
                 // arrange
-                Students expectedStudents = student1;
+                Student expectedStudents = student1;
                 when(studentRepository.findByStudentId(eq("A123456"))).thenReturn(Optional.of(expectedStudents));
 
                 // act
