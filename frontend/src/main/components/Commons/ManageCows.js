@@ -19,13 +19,13 @@ const ManageCows = ({ userCommons, commons, setMessage, openModal }) => {
             <Card.Body style={// Stryker disable next-line all: don't test CSS params
                 {backgroundColor: "rgb(245, 210, 140)"}}>
                 {/* change $10 to info from fixture */}
-                <Card.Title className="text-center">
+                <Card.Title className="text-center" style={{ marginBottom: "15px" }}>
                     💵 Market Cow Price: ${commons?.cowPrice}
                 </Card.Title>
-                <Card.Title className="text-center">
+                <Card.Title className="text-center"style={{ marginBottom: "20px" }}>
                     🐮 Number of Cows: {userCommons.numOfCows}
                 </Card.Title>
-                <Card.Title className="text-center">
+                <Card.Title className="text-center"style={{ marginBottom: "20px" }}>
                     🥛 Current Milk Price: ${commons?.milkPrice}
                 </Card.Title>
                 {/* when the ID doesnt match, dont show the buy/sell button */}
@@ -39,7 +39,7 @@ const ManageCows = ({ userCommons, commons, setMessage, openModal }) => {
                 ) : (
                     <>
                         <Row>
-                            <Col className="text-center">
+                            <Col className="text-center" style={{ marginBottom: "20px" }}>
                                 <Button
                                     variant="outline-success"
                                     onClick={() => {
