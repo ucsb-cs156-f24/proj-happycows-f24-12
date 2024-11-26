@@ -141,6 +141,26 @@ public class StudentsControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
+         @WithMockUser(roles = { "ADMIN" })
+        @Test
+        public void admin_can_get_one_students_from_a_studentId() throws Exception {
+
+                // arrange
+                Students expectedStudents = student1;
+                when(studentRepository.findByStudentId(eq("A123456"))).thenReturn(Optional.of(expectedStudents));
+
+                // act
+                MvcResult response = mockMvc.perform(get("/api/students?studentId=A123456"))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+
+                verify(studentRepository, times(1)).findByStudentId(eq("A123456"));
+                String expectedJson = mapper.writeValueAsString(expectedStudents);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
         @WithMockUser(roles = { "ADMIN" })
         @Test
         public void admin_cannot_get_all_students_for_a_non_existing_course() throws Exception {

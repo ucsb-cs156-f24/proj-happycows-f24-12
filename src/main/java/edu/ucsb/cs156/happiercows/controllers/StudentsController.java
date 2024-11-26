@@ -69,6 +69,17 @@ public class StudentsController extends ApiController {
                 return students;
         }
 
+        @Operation(summary = "Get individual Students from studentId")
+        @PreAuthorize("hasRole('ROLE_ADMIN')")
+        @GetMapping("")
+        public Student getStaff(
+                        @Parameter(name = "studentId") @RequestParam Long studentId)
+                        throws JsonProcessingException {
+
+                Student students = studentRepository.findByStudentId(studentId).orElseThrow(() -> new EntityNotFoundException(Student.class, studentId));;
+                return students;
+        }
+
         @Operation(summary = "Upload Students for Course in UCSB Egrades Format")
         @PreAuthorize("hasRole('ROLE_ADMIN')")
         @PostMapping(value = "/upload/egrades", consumes = { "multipart/form-data" })
