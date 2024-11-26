@@ -211,10 +211,22 @@ describe("OurTable tests (optimized)", () => {
             expect(rows[1]).toHaveTextContent("Hello 20");
             expect(rows[10]).toHaveTextContent("Hello 29");
         });
+
+        test("renders correct sort carets for columns", () => {
+            renderTable(hundredRows);
         
+            // Verify no caret initially
+            expect(screen.getByTestId("testid-header-col1-sort-carets")).toHaveTextContent('');
+        
+            // Click to sort ascending
+            fireEvent.click(screen.getByTestId("testid-header-col1"));
+            expect(screen.getByTestId("testid-header-col1-sort-carets")).toHaveTextContent('🔼');
+        
+            // Click to sort descending
+            fireEvent.click(screen.getByTestId("testid-header-col1"));
+            expect(screen.getByTestId("testid-header-col1-sort-carets")).toHaveTextContent('🔽');
+        });
 
         
-        
-     
      
 });
